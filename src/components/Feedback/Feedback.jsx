@@ -1,54 +1,51 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import Buttons from './Buttons/Buttons';
 import Statistics from './Statistics/Statistics';
 import NoReviews from './NoReviews/NoReviews';
 import { Header } from './Feddbeck.styled';
 
-export default class Feedback extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const   Feedback =() => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  const feedback = { good, neutral, bad };
 
   //змінюємо стейт відповідно до ключа
-  onClickButton = key => {
-    this.setState(prevState => ({ [key]: prevState[key] + 1 }));
+  const onClickButton = key => {
+    if(key === 'good') { setGood(prevState => prevState + 1); }
+    if(key === 'neutral') { setNeutral(prevState => prevState + 1); }
+    if(key === 'bad') { setBad(prevState => prevState + 1); }
   };
 
   // вираховуємо процент позитивних відгуків
-  positivePercentage = () =>
-    Math.round((this.state.good / this.totalCounter()) * 100);
+  const positivePercentage = () =>
+    Math.round((good / totalCounter()) * 100);
 
   // загальна сума відгуків
-  totalCounter = () => this.state.good + this.state.neutral + this.state.bad;
-
-  render() {
-    
-    const { good, neutral, bad } = this.state;
-    const keys = Object.keys(this.state);
+  const totalCounter = () => good + neutral + bad;
+  const keys = Object.keys(feedback);
 
     return (
       <div>
         <Header>Please leave feedback</Header>
-        <Buttons keys={keys} onClickButton={this.onClickButton}></Buttons>
+        <Buttons keys={keys} onClickButton={onClickButton}></Buttons>
         <div>
           {/* рендеримо розмітку за умовою */}
-          {this.totalCounter() === 0 ?(
+          {totalCounter() === 0 ?(
             <NoReviews text="There is no feedback"/>
           ) : (
             <Statistics
               good={good}
               neutral={neutral}
               bad={bad}
-              total={this.totalCounter()}
+              total={totalCounter()}
               positivePercentage={
-                this.totalCounter() ? this.positivePercentage() : 0
+                totalCounter() ? positivePercentage() : 0
               }
             />
           )}
         </div>
       </div>
     );
-  }
+
 }
